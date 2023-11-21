@@ -4,26 +4,33 @@
 use std::{collections::HashMap, sync::Mutex};
 
 use amp_sim::audio_backend::{
-    audio_device_manager::{self, AudioDeviceManager},
-    audio_processor::AudioProcessor,
+    audio_device_manager::AudioDeviceManager, audio_processor::AudioProcessor,
 };
-use cpal::traits::DeviceTrait;
 
 #[tauri::command]
-fn get_audio_devices() -> Result<Vec<String>, String> {
+fn get_audio_devices() -> Result<HashMap<String, Vec<String>>, String> {
     let input_devices = AudioDeviceManager::get_input_devices().expect("To get input devices");
-    // Ok(HashMap::from([("inputs".to_string(), input_devices)]))
-    Ok(input_devices)
+    let output_devices = AudioDeviceManager::get_output_devices().expect("To get output devices");
+    Ok(HashMap::from([
+        ("inputs".to_string(), input_devices),
+        ("outputs".to_string(), output_devices),
+    ]))
 }
 
 #[tauri::command]
-fn set_audio_input_device(
+fn set_input_device(
     state: tauri::State<Mutex<AudioDeviceManager>>,
     new_device: String,
 ) -> Result<(), String> {
-    let _ = state.lock().unwrap().set_input_device(new_device);
-    println!("{:#?}", state.lock().unwrap().input_device.name());
-    Ok(())
+    state.lock().unwrap().set_input_device(new_device)
+}
+
+#[tauri::command]
+fn set_output_device(
+    state: tauri::State<Mutex<AudioDeviceManager>>,
+    new_device: String,
+) -> Result<(), String> {
+    state.lock().unwrap().set_output_device(new_device)
 }
 
 #[tauri::command]
@@ -40,7 +47,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             get_audio_devices,
             start_audio,
-            set_audio_input_device
+            set_input_device,
+            set_output_device
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

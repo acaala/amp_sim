@@ -79,4 +79,27 @@ impl AudioDeviceManager {
             None => Err("Failed to get specified device".to_string()),
         }
     }
+    pub fn set_output_device(&mut self, new_device: String) -> Result<(), String> {
+        let host = cpal::default_host();
+
+        let devices = match host.output_devices() {
+            Ok(devices) => devices.collect::<Vec<_>>(), // Store devices in a Vec
+            Err(e) => {
+                println!("Error getting input devices: {:?}", e);
+                return Err(e.to_string());
+            }
+        };
+
+        let output_device = devices
+            .into_iter()
+            .find(|x| x.name().unwrap() == new_device);
+
+        match output_device {
+            Some(device) => {
+                self.input_device = device;
+                Ok(())
+            }
+            None => Err("Failed to get specified device".to_string()),
+        }
+    }
 }
