@@ -5,7 +5,7 @@ use cpal::{
 };
 
 pub struct AudioDeviceManager {
-    pub input_device: Device,
+    input_device: Device,
     output_device: Device,
 }
 
@@ -96,7 +96,7 @@ impl AudioDeviceManager {
 
         match output_device {
             Some(device) => {
-                self.input_device = device;
+                self.output_device = device;
                 Ok(())
             }
             None => Err("Failed to get specified device".to_string()),
