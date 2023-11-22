@@ -59,9 +59,27 @@ fn set_output_device(
 }
 
 #[tauri::command]
-fn start_audio(tx: tauri::State<mpsc::Sender<AudioCommand>>) {
+fn start_audio(
+    tx: tauri::State<mpsc::Sender<AudioCommand>>,
+    audio_device_manager: tauri::State<Arc<Mutex<AudioDeviceManager>>>,
+) -> Result<HashMap<String, String>, String> {
     tx.send(AudioCommand::Start)
         .expect("Failed to send start command");
+
+    let device_manager = audio_device_manager
+        .lock()
+        .expect("To get default devices on load");
+    println!("{:#?}", device_manager.input_device.name().unwrap());
+    Ok(HashMap::from([
+        (
+            "input".to_string(),
+            device_manager.input_device.name().unwrap(),
+        ),
+        (
+            "output".to_string(),
+            device_manager.output_device.name().unwrap(),
+        ),
+    ]))
 }
 
 #[tauri::command]

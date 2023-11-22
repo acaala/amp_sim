@@ -11,6 +11,14 @@
     outputs: [],
   };
 
+  let initialDevices: {
+    input: string,
+    output: string,
+  } = {
+    input: "",
+    output: ""
+  }
+
 
   async function getDevices(){
     devices = await invoke("get_devices");
@@ -18,10 +26,12 @@
 
   onMount( async () => {
     await getDevices();
+     await startAudio();
   })
 
   async function startAudio() {
-    await invoke("start_audio");
+    initialDevices = await invoke("start_audio") as { input: string, output: string };
+    console.log(initialDevices);
   }
 
   async function setInputDevice(e: Event) {
@@ -43,12 +53,12 @@
 <div>
   <select on:change={(e) => setInputDevice(e)}>
     {#each devices.inputs as input}
-      <option value="{input}">{input}</option>
+      <option value="{input}" selected={input == initialDevices.input}>{input}</option>
     {/each}
   </select>
   <select on:change={(e) => setOutDevice(e)}>
     {#each devices.outputs as output}
-      <option value="{output}">{output}</option>
+      <option value="{output}" selected={output == initialDevices.output}>{output}</option>
     {/each}
   </select>
 
