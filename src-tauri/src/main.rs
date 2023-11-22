@@ -100,7 +100,7 @@ fn audio_thread(rx: mpsc::Receiver<AudioCommand>, device_manager: Arc<Mutex<Audi
         match command {
             AudioCommand::Start => match device_manager.lock() {
                 Ok(guard) => {
-                    println!("Starting stream");
+                    println!("Starting stream...");
                     stream_manager.run(&guard).expect("Failed to start streams");
                 }
                 Err(poisoned) => {
@@ -108,7 +108,7 @@ fn audio_thread(rx: mpsc::Receiver<AudioCommand>, device_manager: Arc<Mutex<Audi
                 }
             },
             AudioCommand::Stop => {
-                println!("stopping");
+                println!("Stopping stream...");
                 stream_manager.stop().expect("to stop streams");
             }
         }

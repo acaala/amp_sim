@@ -2,7 +2,11 @@
   import { invoke } from "@tauri-apps/api/tauri"
   import { onMount } from "svelte";
 
-  let name = "";
+  type InitialDevices = {
+    input: string,
+    output: string
+  }
+
   let devices: {
     inputs: Array<string>
     outputs: Array<string>
@@ -11,10 +15,7 @@
     outputs: [],
   };
 
-  let initialDevices: {
-    input: string,
-    output: string,
-  } = {
+  let initialDevices: InitialDevices = {
     input: "",
     output: ""
   }
@@ -30,7 +31,7 @@
   })
 
   async function startAudio() {
-    initialDevices = await invoke("start_audio") as { input: string, output: string };
+    initialDevices = await invoke("start_audio") as InitialDevices;
     console.log(initialDevices);
   }
 
@@ -61,6 +62,4 @@
       <option value="{output}" selected={output == initialDevices.output}>{output}</option>
     {/each}
   </select>
-
-  <!-- <button on:click={startAudio}>Start audio</button> -->
 </div>

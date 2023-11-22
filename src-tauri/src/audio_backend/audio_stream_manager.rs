@@ -64,7 +64,7 @@ impl AudioStreamManager {
         self.input_stream = None;
         self.output_stream = None;
 
-        println!("stopped stream");
+        println!("Stopped stream");
         Ok(())
     }
 
