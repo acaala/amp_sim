@@ -65,7 +65,7 @@ impl AudioDeviceManager {
             .into_iter()
             .find(|x| x.name().unwrap() == new_device_name);
 
-        self.input_device = output_device.unwrap();
+        self.output_device = output_device.unwrap();
 
         Ok(())
     }
