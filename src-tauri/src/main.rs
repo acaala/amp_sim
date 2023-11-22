@@ -1,141 +1,18 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{
-    collections::HashMap,
-    sync::{
-        mpsc::{self, Sender},
-        Arc, Mutex,
+use std::sync::{Arc, Mutex};
+
+use amp_sim::{
+    audio::start_audio_thread,
+    audio_backend::{audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline},
+    tauri_commands::{
+        __cmd__get_devices, __cmd__set_input_device, __cmd__set_output_device, __cmd__start_audio,
+        __cmd__stop_audio, get_devices, set_input_device, set_output_device, start_audio,
+        stop_audio,
     },
-    thread,
 };
 
-use amp_sim::audio_backend::{
-    audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline,
-    audio_stream_manager::AudioStreamManager,
-};
-use cpal::traits::DeviceTrait;
-
-#[tauri::command]
-fn get_devices() -> Result<HashMap<String, Vec<String>>, String> {
-    let input_devices = AudioDeviceManager::get_input_devices().expect("To get input devices");
-    let output_devices = AudioDeviceManager::get_output_devices().expect("To get output devices");
-    Ok(HashMap::from([
-        ("inputs".to_string(), input_devices),
-        ("outputs".to_string(), output_devices),
-    ]))
-}
-
-#[tauri::command]
-fn set_input_device(
-    state: tauri::State<Arc<Mutex<AudioDeviceManager>>>,
-    tx: tauri::State<mpsc::Sender<AudioCommand>>,
-    new_device: String,
-) -> Result<(), String> {
-    println!("{:#?}", state.lock().unwrap().input_device.name());
-    tx.send(AudioCommand::Stop)
-        .expect("Failed to send stop command");
-    let _ = state.lock().unwrap().set_input_device(new_device);
-    tx.send(AudioCommand::Start)
-        .expect("Failed to send start command");
-    Ok(())
-}
-
-#[tauri::command]
-fn set_output_device(
-    state: tauri::State<Arc<Mutex<AudioDeviceManager>>>,
-    tx: tauri::State<Sender<AudioCommand>>,
-    new_device: String,
-) -> Result<(), String> {
-    println!("{:#?}", state.lock().unwrap().output_device.name());
-
-    tx.send(AudioCommand::Stop)
-        .expect("Failed to send stop command");
-
-    let _ = state.lock().unwrap().set_output_device(new_device);
-
-    tx.send(AudioCommand::Start)
-        .expect("Failed to send start command");
-    Ok(())
-}
-
-#[tauri::command]
-fn start_audio(
-    tx: tauri::State<mpsc::Sender<AudioCommand>>,
-    audio_device_manager: tauri::State<Arc<Mutex<AudioDeviceManager>>>,
-) -> Result<HashMap<String, String>, String> {
-    tx.send(AudioCommand::Start)
-        .expect("Failed to send start command");
-
-    let device_manager = audio_device_manager
-        .lock()
-        .expect("To get default devices on load");
-
-    println!("{:#?}", device_manager.input_device.name().unwrap());
-    Ok(HashMap::from([
-        (
-            "input".to_string(),
-            device_manager.input_device.name().unwrap(),
-        ),
-        (
-            "output".to_string(),
-            device_manager.output_device.name().unwrap(),
-        ),
-    ]))
-}
-
-#[tauri::command]
-fn stop_audio(tx: tauri::State<mpsc::Sender<AudioCommand>>) {
-    tx.send(AudioCommand::Stop)
-        .expect("Failed to send stop command");
-}
-
-enum AudioCommand {
-    Start,
-    Stop,
-}
-
-fn audio_thread(
-    rx: mpsc::Receiver<AudioCommand>,
-    device_manager: Arc<Mutex<AudioDeviceManager>>,
-    audio_pipeline: Arc<Mutex<AudioPipeline>>,
-) {
-    let mut stream_manager = AudioStreamManager::new();
-
-    for command in rx {
-        match command {
-            AudioCommand::Start => match device_manager.lock() {
-                Ok(guard) => {
-                    println!("Starting stream...");
-
-                    stream_manager
-                        .run(&guard, audio_pipeline.clone())
-                        .expect("Failed to start streams");
-                }
-                Err(poisoned) => {
-                    println!("{:#?}", poisoned)
-                }
-            },
-            AudioCommand::Stop => {
-                println!("Stopping stream...");
-                stream_manager.stop().expect("to stop streams");
-            }
-        }
-    }
-}
-
-fn start_audio_thread(
-    device_manager: Arc<Mutex<AudioDeviceManager>>,
-    audio_pipeline: Arc<Mutex<AudioPipeline>>,
-) -> mpsc::Sender<AudioCommand> {
-    let (tx, rx) = mpsc::channel();
-
-    thread::spawn(move || {
-        audio_thread(rx, device_manager, audio_pipeline);
-    });
-
-    tx
-}
 fn main() {
     let audio_device_manager = Arc::new(Mutex::new(AudioDeviceManager::new()));
     let audio_pipeline = Arc::new(Mutex::new(AudioPipeline::new()));
