@@ -1,4 +1,7 @@
-use std::{mem::MaybeUninit, sync::Arc};
+use std::{
+    mem::MaybeUninit,
+    sync::{Arc, Mutex},
+};
 
 use anyhow::Error;
 use cpal::{
@@ -7,7 +10,7 @@ use cpal::{
 };
 use ringbuf::{Consumer, HeapRb, Producer, SharedRb};
 
-use super::audio_device_manager::AudioDeviceManager;
+use super::{audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline};
 
 pub struct AudioStreamManager {
     input_stream: Option<Stream>,
@@ -22,7 +25,11 @@ impl AudioStreamManager {
         }
     }
 
-    pub fn run(&mut self, audio_device_manager: &AudioDeviceManager) -> Result<(), Error> {
+    pub fn run(
+        &mut self,
+        audio_device_manager: &AudioDeviceManager,
+        audio_pipeline: Arc<Mutex<AudioPipeline>>,
+    ) -> Result<(), Error> {
         let input_device = &audio_device_manager.input_device;
         let output_device = &audio_device_manager.output_device;
 
@@ -48,8 +55,9 @@ impl AudioStreamManager {
 
         let input_stream =
             Self::get_input_stream(&input_device, producer).expect("Failed to get input stream");
-        let output_stream =
-            Self::get_output_stream(&output_device, consumer).expect("Failed to get output stream");
+
+        let output_stream = Self::get_output_stream(&output_device, consumer, audio_pipeline)
+            .expect("Failed to get output stream");
 
         input_stream.play().expect("to play input stream");
         output_stream.play().expect("to play input stream");
@@ -90,7 +98,7 @@ impl AudioStreamManager {
     fn get_output_stream(
         output_device: &Device,
         mut consumer: Consumer<f32, Arc<SharedRb<f32, Vec<MaybeUninit<f32>>>>>,
-        // audio_pipeline: AudioPipeline,
+        audio_pipeline: Arc<Mutex<AudioPipeline>>,
     ) -> Result<Stream, anyhow::Error> {
         let config = output_device.default_output_config().unwrap().config();
 
@@ -98,7 +106,7 @@ impl AudioStreamManager {
             let mut input_fell_behind = false;
             for sample in data {
                 *sample = match consumer.pop() {
-                    Some(s) => s,
+                    Some(s) => audio_pipeline.lock().unwrap().process_sample(s),
 
                     None => {
                         input_fell_behind = true;

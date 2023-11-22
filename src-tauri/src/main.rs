@@ -11,7 +11,8 @@ use std::{
 };
 
 use amp_sim::audio_backend::{
-    audio_device_manager::AudioDeviceManager, audio_stream_manager::AudioStreamManager,
+    audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline,
+    audio_stream_manager::AudioStreamManager,
 };
 use cpal::traits::DeviceTrait;
 
@@ -69,6 +70,7 @@ fn start_audio(
     let device_manager = audio_device_manager
         .lock()
         .expect("To get default devices on load");
+
     println!("{:#?}", device_manager.input_device.name().unwrap());
     Ok(HashMap::from([
         (
@@ -93,7 +95,11 @@ enum AudioCommand {
     Stop,
 }
 
-fn audio_thread(rx: mpsc::Receiver<AudioCommand>, device_manager: Arc<Mutex<AudioDeviceManager>>) {
+fn audio_thread(
+    rx: mpsc::Receiver<AudioCommand>,
+    device_manager: Arc<Mutex<AudioDeviceManager>>,
+    audio_pipeline: Arc<Mutex<AudioPipeline>>,
+) {
     let mut stream_manager = AudioStreamManager::new();
 
     for command in rx {
@@ -101,7 +107,10 @@ fn audio_thread(rx: mpsc::Receiver<AudioCommand>, device_manager: Arc<Mutex<Audi
             AudioCommand::Start => match device_manager.lock() {
                 Ok(guard) => {
                     println!("Starting stream...");
-                    stream_manager.run(&guard).expect("Failed to start streams");
+
+                    stream_manager
+                        .run(&guard, audio_pipeline.clone())
+                        .expect("Failed to start streams");
                 }
                 Err(poisoned) => {
                     println!("{:#?}", poisoned)
@@ -116,20 +125,23 @@ fn audio_thread(rx: mpsc::Receiver<AudioCommand>, device_manager: Arc<Mutex<Audi
 }
 
 fn start_audio_thread(
-    device_manager: Arc<std::sync::Mutex<AudioDeviceManager>>,
+    device_manager: Arc<Mutex<AudioDeviceManager>>,
+    audio_pipeline: Arc<Mutex<AudioPipeline>>,
 ) -> mpsc::Sender<AudioCommand> {
     let (tx, rx) = mpsc::channel();
 
     thread::spawn(move || {
-        audio_thread(rx, device_manager);
+        audio_thread(rx, device_manager, audio_pipeline);
     });
 
     tx
 }
 fn main() {
     let audio_device_manager = Arc::new(Mutex::new(AudioDeviceManager::new()));
-    let audio_device_manager_clone = audio_device_manager.clone();
-    let audio_tx = start_audio_thread(audio_device_manager_clone);
+    let audio_pipeline = Arc::new(Mutex::new(AudioPipeline::new()));
+
+    let audio_tx = start_audio_thread(audio_device_manager.clone(), audio_pipeline.clone());
+
     tauri::Builder::default()
         .manage(audio_device_manager)
         .manage(audio_tx)
