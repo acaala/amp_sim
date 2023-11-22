@@ -13,12 +13,16 @@
 
 
   async function getDevices(){
-    devices = await invoke("get_audio_devices");
+    devices = await invoke("get_devices");
   }
 
   onMount( async () => {
     await getDevices();
   })
+
+  async function startAudio() {
+    await invoke("start_audio");
+  }
 
   async function setInputDevice(e: Event) {
     const target = e.target as HTMLSelectElement;
@@ -47,4 +51,6 @@
       <option value="{output}">{output}</option>
     {/each}
   </select>
+
+  <!-- <button on:click={startAudio}>Start audio</button> -->
 </div>

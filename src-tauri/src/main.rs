@@ -11,8 +11,7 @@ use std::{
 };
 
 use amp_sim::audio_backend::{
-    audio_device_manager::AudioDeviceManager,
-    audio_stream_manager::{self, AudioStreamManager},
+    audio_device_manager::AudioDeviceManager, audio_stream_manager::AudioStreamManager,
 };
 use cpal::traits::DeviceTrait;
 
@@ -35,7 +34,7 @@ fn set_input_device(
     println!("{:#?}", state.lock().unwrap().input_device.name());
     tx.send(AudioCommand::Stop)
         .expect("Failed to send stop command");
-    state.lock().unwrap().set_input_device(new_device);
+    let _ = state.lock().unwrap().set_input_device(new_device);
     tx.send(AudioCommand::Start)
         .expect("Failed to send start command");
     Ok(())
@@ -52,7 +51,7 @@ fn set_output_device(
     tx.send(AudioCommand::Stop)
         .expect("Failed to send stop command");
 
-    state.lock().unwrap().set_output_device(new_device);
+    let _ = state.lock().unwrap().set_output_device(new_device);
 
     tx.send(AudioCommand::Start)
         .expect("Failed to send start command");

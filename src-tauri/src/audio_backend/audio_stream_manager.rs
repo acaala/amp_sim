@@ -61,9 +61,6 @@ impl AudioStreamManager {
     }
 
     pub fn stop(&mut self) -> Result<(), Error> {
-        self.input_stream.as_mut().unwrap().pause();
-        self.output_stream.as_mut().unwrap().pause();
-
         self.input_stream = None;
         self.output_stream = None;
 
