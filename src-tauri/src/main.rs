@@ -7,9 +7,10 @@ use amp_sim::{
     audio::start_audio_thread,
     audio_backend::{audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline},
     tauri_commands::{
-        __cmd__get_devices, __cmd__set_input_device, __cmd__set_output_device, __cmd__start_audio,
-        __cmd__stop_audio, get_devices, set_input_device, set_output_device, start_audio,
-        stop_audio,
+        __cmd__add_processor_to_pipeline, __cmd__get_devices, __cmd__get_processors,
+        __cmd__set_input_device, __cmd__set_output_device, __cmd__start_audio, __cmd__stop_audio,
+        add_processor_to_pipeline, get_devices, get_processors, set_input_device,
+        set_output_device, start_audio, stop_audio,
     },
 };
 
@@ -22,12 +23,15 @@ fn main() {
     tauri::Builder::default()
         .manage(audio_device_manager)
         .manage(audio_tx)
+        .manage(audio_pipeline)
         .invoke_handler(tauri::generate_handler![
             set_input_device,
             set_output_device,
             get_devices,
             start_audio,
-            stop_audio
+            stop_audio,
+            get_processors,
+            add_processor_to_pipeline,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

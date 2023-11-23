@@ -1,9 +1,9 @@
 use crate::audio_backend::processor_trait::Processor;
 
 pub struct ScreamerPedal {
-    pub(crate) overdrive: f32, // Controls the amount of overdrive
-    pub(crate) tone: f32,      // Tone control, typically affects mid frequencies
-    pub(crate) level: f32,     // Output level of the pedal
+    pub overdrive: f32, // Controls the amount of overdrive
+    pub tone: f32,      // Tone control, typically affects mid frequencies
+    pub level: f32,     // Output level of the pedal
 }
 
 impl Processor for ScreamerPedal {
@@ -16,6 +16,10 @@ impl Processor for ScreamerPedal {
         let clipped = self.soft_clipping(input * self.overdrive);
         let shaped_tone = self.apply_tone(clipped);
         shaped_tone * self.level
+    }
+
+    fn name() -> &'static str {
+        "Screamer"
     }
 }
 

@@ -1,12 +1,22 @@
 use std::{
     collections::HashMap,
+    os::unix::process,
     sync::{mpsc::Sender, Arc, Mutex},
 };
 
+use anyhow::{anyhow, Error};
 use cpal::traits::DeviceTrait;
 use tauri::State;
 
-use crate::{audio::AudioCommand, audio_backend::audio_device_manager::AudioDeviceManager};
+use crate::{
+    audio::{self, get_processor_impl_names, get_processors_map, AudioCommand},
+    audio_backend::{
+        audio_device_manager::AudioDeviceManager,
+        audio_pipeline::AudioPipeline,
+        processor_trait::Processor,
+        processors::amplifier::{self, Amplifier},
+    },
+};
 
 #[tauri::command]
 pub fn start_audio(
@@ -80,4 +90,39 @@ pub fn get_devices() -> Result<HashMap<String, Vec<String>>, String> {
         ("inputs".to_string(), input_devices),
         ("outputs".to_string(), output_devices),
     ]))
+}
+
+#[tauri::command]
+pub fn get_processors() -> Vec<&'static str> {
+    get_processor_impl_names()
+}
+
+#[tauri::command]
+pub fn add_processor_to_pipeline(
+    audio_pipeline: State<Arc<Mutex<AudioPipeline>>>,
+    name: String,
+) -> HashMap<&str, f32> {
+    let mut processor_details = HashMap::new();
+
+    let processor: Result<Box<dyn Processor>, Error> = match name.as_str() {
+        "amplifier" => {
+            let amplifier = Box::new(Amplifier::new());
+            processor_details.insert("volume", amplifier.volume);
+            processor_details.insert("distortion_gain", amplifier.distortion_gain);
+            processor_details.insert("preamp_gain", amplifier.preamp_gain);
+            processor_details.insert("tone", amplifier.tone);
+            Ok(amplifier)
+        }
+        _ => {
+            println!("Failed to find processor");
+            Err(anyhow!("Processor not found"))
+        }
+    };
+
+    if let Ok(proc) = processor {
+        audio_pipeline.lock().unwrap().add_processor(proc);
+        println!("Added processor: {:#?}", name)
+    }
+
+    processor_details
 }

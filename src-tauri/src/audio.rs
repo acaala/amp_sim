@@ -1,4 +1,5 @@
 use std::{
+    collections::HashMap,
     sync::{
         mpsc::{self, Receiver, Sender},
         Arc, Mutex,
@@ -7,8 +8,11 @@ use std::{
 };
 
 use crate::audio_backend::{
-    audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline,
+    audio_device_manager::AudioDeviceManager,
+    audio_pipeline::AudioPipeline,
     audio_stream_manager::AudioStreamManager,
+    processor_trait::Processor,
+    processors::{amplifier::Amplifier, screamer::ScreamerPedal},
 };
 
 pub enum AudioCommand {
@@ -57,3 +61,16 @@ pub fn start_audio_thread(
 
     tx
 }
+
+pub fn get_processor_impl_names() -> Vec<&'static str> {
+    vec![Amplifier::name(), ScreamerPedal::name()]
+}
+
+// pub fn get_processors_map() -> HashMap<String, Box<dyn Processor>> {
+//     let processor_map = HashMap::from([(
+//         "amplifier".to_string(),
+//         Box::new(Amplifier::new()) as Box<dyn Processor>,
+//     )]);
+
+//     processor_map
+// }

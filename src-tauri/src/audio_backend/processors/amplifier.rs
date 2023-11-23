@@ -1,9 +1,9 @@
 use crate::audio_backend::processor_trait::Processor;
 pub struct Amplifier {
-    preamp_gain: f32,
-    distortion_gain: f32,
-    tone: f32,
-    volume: f32,
+    pub preamp_gain: f32,
+    pub distortion_gain: f32,
+    pub tone: f32,
+    pub volume: f32,
 }
 
 impl Processor for Amplifier {
@@ -22,6 +22,9 @@ impl Processor for Amplifier {
 
         output_sample
     }
+    fn name() -> &'static str {
+        "Amplifier"
+    }
 }
 
 impl Amplifier {
@@ -31,7 +34,7 @@ impl Amplifier {
             preamp_gain: 40.0,     // Gain before distortion stage
             distortion_gain: 60.0, // Gain applied during distortion stage
             tone: 400.0,           // Adjust the tone for controlling high-frequency content
-            volume: 1.0,           // Adjust the overall output volume
+            volume: 0.0,           // Adjust the overall output volume
         }
     }
     // Apply distortion to a sample
