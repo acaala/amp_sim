@@ -1,6 +1,5 @@
 use std::{
     collections::HashMap,
-    os::unix::process,
     sync::{mpsc::Sender, Arc, Mutex},
 };
 
@@ -9,12 +8,10 @@ use cpal::traits::DeviceTrait;
 use tauri::State;
 
 use crate::{
-    audio::{self, get_processor_impl_names, get_processors_map, AudioCommand},
+    audio::{get_processor_impl_names, AudioCommand},
     audio_backend::{
-        audio_device_manager::AudioDeviceManager,
-        audio_pipeline::AudioPipeline,
-        processor_trait::Processor,
-        processors::amplifier::{self, Amplifier},
+        audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline,
+        processor_trait::Processor, processors::amplifier::Amplifier,
     },
 };
 

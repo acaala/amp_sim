@@ -1,5 +1,4 @@
 use std::{
-    collections::HashMap,
     sync::{
         mpsc::{self, Receiver, Sender},
         Arc, Mutex,
@@ -65,12 +64,3 @@ pub fn start_audio_thread(
 pub fn get_processor_impl_names() -> Vec<&'static str> {
     vec![Amplifier::name(), ScreamerPedal::name()]
 }
-
-// pub fn get_processors_map() -> HashMap<String, Box<dyn Processor>> {
-//     let processor_map = HashMap::from([(
-//         "amplifier".to_string(),
-//         Box::new(Amplifier::new()) as Box<dyn Processor>,
-//     )]);
-
-//     processor_map
-// }
