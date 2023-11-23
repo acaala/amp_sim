@@ -1,7 +1,7 @@
 use crate::audio_backend::processor_trait::Processor;
 
 pub struct AudioPipeline {
-    processors: Vec<Box<dyn Processor>>,
+    pub processors: Vec<Box<dyn Processor>>,
 }
 
 impl AudioPipeline {

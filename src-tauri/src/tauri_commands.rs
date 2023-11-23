@@ -123,3 +123,21 @@ pub fn add_processor_to_pipeline(
 
     processor_details
 }
+
+#[tauri::command]
+pub fn update_processor_values(
+    pipeline: State<Arc<Mutex<AudioPipeline>>>,
+    processor_name: String,
+    values: HashMap<String, f32>,
+) -> HashMap<String, f32> {
+    let mut pipeline_guard = pipeline.lock().unwrap();
+    let processors = &mut pipeline_guard.processors;
+    if let Some(proc) = processors
+        .iter_mut()
+        .find(|proc| proc.get_name() == processor_name)
+    {
+        proc.update_values(values.clone());
+    }
+
+    values
+}

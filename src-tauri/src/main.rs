@@ -9,8 +9,8 @@ use amp_sim::{
     tauri_commands::{
         __cmd__add_processor_to_pipeline, __cmd__get_devices, __cmd__get_processors,
         __cmd__set_input_device, __cmd__set_output_device, __cmd__start_audio, __cmd__stop_audio,
-        add_processor_to_pipeline, get_devices, get_processors, set_input_device,
-        set_output_device, start_audio, stop_audio,
+        __cmd__update_processor_values, add_processor_to_pipeline, get_devices, get_processors,
+        set_input_device, set_output_device, start_audio, stop_audio, update_processor_values,
     },
 };
 
@@ -32,6 +32,7 @@ fn main() {
             stop_audio,
             get_processors,
             add_processor_to_pipeline,
+            update_processor_values,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::audio_backend::processor_trait::Processor;
 pub struct Amplifier {
     pub preamp_gain: f32,
@@ -22,8 +24,21 @@ impl Processor for Amplifier {
 
         output_sample
     }
+
+    fn update_values(&mut self, hash_map_values: HashMap<String, f32>) {
+        self.volume = hash_map_values.get("volume").unwrap().to_owned();
+        println!(
+            "Set volume to: {:#?}",
+            hash_map_values.get("volume").unwrap()
+        );
+    }
+
     fn name() -> &'static str {
         "Amplifier"
+    }
+
+    fn get_name(&self) -> &'static str {
+        "amplifier"
     }
 }
 

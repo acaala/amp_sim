@@ -66,6 +66,11 @@
       console.log(processorDetails);
     }
   }
+
+  async function updateProcessorValues() {
+   let newValues = await invoke("update_processor_values", { processorName: "amplifier", values: { "volume": 1.0 } })
+   console.log(newValues);
+  }
 </script>
 
 <div>
@@ -79,11 +84,15 @@
       <option value="{output}" selected={output == initialDevices.output}>{output}</option>
     {/each}
   </select>
-<div>
+  <div>
 
-  {#each processors as processor }
-    <button on:click={(e) => addProcessor(e)}>{processor}</button>
-  {/each}
+    {#each processors as processor }
+      <button on:click={(e) => addProcessor(e)}>{processor}</button>
+    {/each}
 
+  </div>
+
+  <div>
+    <button on:click={updateProcessorValues}>Turn volume to 1</button>
   </div>
 </div>
