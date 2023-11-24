@@ -11,7 +11,6 @@
 
   async function getActiveProcessors() {
     activeProcessors = await invoke("get_active_processors");
-    console.log(activeProcessors);
   }
 
   onMount(async () => {
@@ -23,13 +22,8 @@
     const target = e.target as HTMLButtonElement;
 
     if (target) {
-      let processorDetails = await invoke("add_processor_to_pipeline", {
+      await invoke("add_processor_to_pipeline", {
         name: target.innerText.toLowerCase(),
-      });
-
-      activeProcessors.push({
-        name: target.innerText.toLowerCase(),
-        processorDetails,
       });
 
       getActiveProcessors();

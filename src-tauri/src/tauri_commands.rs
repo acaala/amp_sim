@@ -112,19 +112,10 @@ pub fn get_active_processors(
 }
 
 #[tauri::command]
-pub fn add_processor_to_pipeline(
-    audio_pipeline: State<Arc<Mutex<AudioPipeline>>>,
-    name: String,
-) -> HashMap<&str, f32> {
-    let mut processor_details = HashMap::new();
-
+pub fn add_processor_to_pipeline(audio_pipeline: State<Arc<Mutex<AudioPipeline>>>, name: String) {
     let processor: Result<Box<dyn Processor>, Error> = match name.as_str() {
         "amplifier" => {
             let amplifier = Box::new(Amplifier::new());
-            processor_details.insert("volume", amplifier.volume);
-            processor_details.insert("distortion_gain", amplifier.distortion_gain);
-            processor_details.insert("preamp_gain", amplifier.preamp_gain);
-            processor_details.insert("tone", amplifier.tone);
             Ok(amplifier)
         }
         _ => {
@@ -137,8 +128,6 @@ pub fn add_processor_to_pipeline(
         audio_pipeline.lock().unwrap().add_processor(proc);
         println!("Added processor: {:#?}", name)
     }
-
-    processor_details
 }
 
 #[tauri::command]
