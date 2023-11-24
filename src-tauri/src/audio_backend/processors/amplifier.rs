@@ -25,12 +25,40 @@ impl Processor for Amplifier {
         output_sample
     }
 
-    fn update_values(&mut self, hash_map_values: HashMap<String, f32>) {
-        self.volume = hash_map_values.get("volume").unwrap().to_owned();
+    fn update_values(&mut self, hash_map_values: HashMap<String, String>) {
+        self.volume = hash_map_values
+            .get("volume")
+            .unwrap()
+            .parse::<f32>()
+            .unwrap();
         println!(
             "Set volume to: {:#?}",
             hash_map_values.get("volume").unwrap()
         );
+
+        self.preamp_gain = hash_map_values
+            .get("preamp_gain")
+            .unwrap()
+            .parse::<f32>()
+            .unwrap();
+
+        println!(
+            "Set preamp_gain to: {:#?}",
+            hash_map_values.get("preamp_gain").unwrap()
+        );
+        self.distortion_gain = hash_map_values
+            .get("distortion_gain")
+            .unwrap()
+            .parse::<f32>()
+            .unwrap();
+
+        println!(
+            "Set distortion_gain to: {:#?}",
+            hash_map_values.get("distortion_gain").unwrap()
+        );
+        self.tone = hash_map_values.get("tone").unwrap().parse::<f32>().unwrap();
+
+        println!("Set tone to: {:#?}", hash_map_values.get("tone").unwrap());
     }
 
     fn name() -> &'static str {

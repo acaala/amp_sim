@@ -30,11 +30,31 @@
     }
   }
 
-  async function updateProcessorValues() {
-    let newValues = await invoke("update_processor_values", {
-      processorName: "amplifier",
-      values: { volume: 1.0 },
-    });
+  async function updateProcessorValues(e: Event) {
+    let target = e.target as HTMLInputElement;
+    if (e.target) {
+      let form = target.closest("form") as HTMLFormElement;
+
+      if (form) {
+        let values = form.querySelectorAll("input");
+
+        let objectOfNewValues: { [key: string]: number } = {};
+        values.forEach((e) => {
+          let name = e.name;
+          let value = 0;
+          if (e.value) {
+            value = e.value as unknown as number;
+          }
+
+          objectOfNewValues[name] = value;
+        });
+
+        await invoke("update_processor_values", {
+          processorName: form.name,
+          values: objectOfNewValues,
+        });
+      }
+    }
   }
 </script>
 
@@ -58,17 +78,24 @@
       Active Processors
     </h4>
     {#each activeProcessors as processor}
-      <div class="border border-gray-700 p-2">
+      <form name={processor.name.Str} class="border border-gray-700 p-2">
         <div><p class="text-xl capitalize mb-2">{processor.name.Str}</p></div>
         <div class="flex justify-between">
           {#each Object.entries(processor.details.Map) as [detail, value]}
             <div class="flex flex-col items-center px-2">
               <p>{detail}:</p>
-              <input class="text-lg w-full h-full" {value} />
+              <input
+                name={detail}
+                type="number"
+                on:keyup={(e) => updateProcessorValues(e)}
+                on:change={(e) => updateProcessorValues(e)}
+                class="text-lg w-full h-full"
+                {value}
+              />
             </div>
           {/each}
         </div>
-      </div>
+      </form>
     {/each}
   </div>
 </div>

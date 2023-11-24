@@ -17,7 +17,7 @@ impl Processor for ScreamerPedal {
         let shaped_tone = self.apply_tone(clipped);
         shaped_tone * self.level
     }
-    fn update_values(&mut self, hash_map_values: std::collections::HashMap<String, f32>) {}
+    fn update_values(&mut self, hash_map_values: std::collections::HashMap<String, String>) {}
 
     fn name() -> &'static str {
         "Screamer"

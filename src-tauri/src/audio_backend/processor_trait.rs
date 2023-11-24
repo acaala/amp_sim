@@ -9,7 +9,7 @@ pub enum ProcessorHashMapValue {
 }
 pub trait Processor: Send + Sync {
     fn process(&self, input: f32) -> f32;
-    fn update_values(&mut self, hash_map_values: HashMap<String, f32>);
+    fn update_values(&mut self, hash_map_values: HashMap<String, String>);
     fn get_name(&self) -> &'static str;
     fn to_hash_map(&self) -> HashMap<String, ProcessorHashMapValue>;
 
