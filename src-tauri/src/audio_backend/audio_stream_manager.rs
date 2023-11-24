@@ -33,8 +33,8 @@ impl AudioStreamManager {
         let input_device = &audio_device_manager.input_device;
         let output_device = &audio_device_manager.output_device;
 
-        println!("Input Device: {:#?}", input_device.name());
-        println!("Output Device: {:#?}", output_device.name());
+        println!("Input Device: {:#?}", input_device.name().unwrap());
+        println!("Output Device: {:#?}", output_device.name().unwrap());
 
         let config: StreamConfig = input_device.default_input_config().unwrap().config();
 

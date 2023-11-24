@@ -10,8 +10,10 @@ use tauri::State;
 use crate::{
     audio::{get_processor_impl_names, AudioCommand},
     audio_backend::{
-        audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline,
-        processor_trait::Processor, processors::amplifier::Amplifier,
+        audio_device_manager::AudioDeviceManager,
+        audio_pipeline::AudioPipeline,
+        processor_trait::{Processor, ProcessorHashMapValue},
+        processors::amplifier::Amplifier,
     },
 };
 
@@ -92,6 +94,21 @@ pub fn get_devices() -> Result<HashMap<String, Vec<String>>, String> {
 #[tauri::command]
 pub fn get_processors() -> Vec<&'static str> {
     get_processor_impl_names()
+}
+
+#[tauri::command]
+pub fn get_active_processors(
+    audio_pipeline: State<Arc<Mutex<AudioPipeline>>>,
+) -> Vec<HashMap<String, ProcessorHashMapValue>> {
+    let active_processors = audio_pipeline.lock().unwrap();
+
+    let active_processors = active_processors
+        .processors
+        .iter()
+        .filter_map(|proc| Some(proc.to_hash_map()))
+        .collect();
+
+    active_processors
 }
 
 #[tauri::command]

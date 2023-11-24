@@ -10,7 +10,7 @@
     <Devices />
   </div>
 
-  <div class="flex">
+  <div class="w-full">
     <Processors />
   </div>
 </main>

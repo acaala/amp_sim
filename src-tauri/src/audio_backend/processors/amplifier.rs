@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::audio_backend::processor_trait::Processor;
+use crate::audio_backend::processor_trait::{Processor, ProcessorHashMapValue};
 pub struct Amplifier {
     pub preamp_gain: f32,
     pub distortion_gain: f32,
@@ -39,6 +39,27 @@ impl Processor for Amplifier {
 
     fn get_name(&self) -> &'static str {
         "amplifier"
+    }
+
+    fn to_hash_map(&self) -> HashMap<String, ProcessorHashMapValue> {
+        let mut processor_hash_map = HashMap::new();
+        let mut processor_details = HashMap::new();
+
+        processor_details.insert("preamp_gain".to_string(), self.preamp_gain);
+        processor_details.insert("distortion_gain".to_string(), self.distortion_gain);
+        processor_details.insert("tone".to_string(), self.tone);
+        processor_details.insert("volume".to_string(), self.volume);
+
+        processor_hash_map.insert(
+            "name".to_string(),
+            ProcessorHashMapValue::Str(self.get_name().to_string()),
+        );
+        processor_hash_map.insert(
+            "details".to_string(),
+            ProcessorHashMapValue::Map(processor_details),
+        );
+
+        processor_hash_map
     }
 }
 

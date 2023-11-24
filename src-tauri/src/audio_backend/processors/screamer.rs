@@ -25,6 +25,15 @@ impl Processor for ScreamerPedal {
     fn get_name(&self) -> &'static str {
         "Screamer"
     }
+
+    fn to_hash_map(
+        &self,
+    ) -> std::collections::HashMap<
+        String,
+        crate::audio_backend::processor_trait::ProcessorHashMapValue,
+    > {
+        todo!()
+    }
 }
 
 impl ScreamerPedal {
