@@ -13,7 +13,7 @@ use crate::{
         audio_device_manager::AudioDeviceManager,
         audio_pipeline::AudioPipeline,
         processor_trait::{Processor, ProcessorHashMapValue},
-        processors::amplifier::Amplifier,
+        processors::{amplifier::Amplifier, screamer::ScreamerPedal},
     },
 };
 
@@ -118,6 +118,7 @@ pub fn add_processor_to_pipeline(audio_pipeline: State<Arc<Mutex<AudioPipeline>>
             let amplifier = Box::new(Amplifier::new());
             Ok(amplifier)
         }
+        "screamer" => Ok(Box::new(ScreamerPedal::new())),
         _ => {
             println!("Failed to find processor");
             Err(anyhow!("Processor not found"))
@@ -151,7 +152,6 @@ pub fn update_processor_values(
 #[tauri::command]
 pub fn remove_processor(pipeline: State<Arc<Mutex<AudioPipeline>>>, processor_name: String) {
     let mut pipeline_guard = pipeline.lock().unwrap();
-    let processors = &mut pipeline_guard.processors;
 
-    processors.retain(|x| x.get_name() != processor_name)
+    pipeline_guard.remove_processor(processor_name)
 }

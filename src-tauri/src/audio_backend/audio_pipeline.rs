@@ -15,6 +15,10 @@ impl AudioPipeline {
         self.processors.push(processor);
     }
 
+    pub fn remove_processor(&mut self, processor_name: String) {
+        self.processors.retain(|x| x.get_name() != processor_name)
+    }
+
     pub fn process_sample(&self, mut sample: f32) -> f32 {
         for processor in &self.processors {
             sample = processor.process(sample)
