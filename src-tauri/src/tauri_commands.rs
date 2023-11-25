@@ -147,3 +147,11 @@ pub fn update_processor_values(
 
     values
 }
+
+#[tauri::command]
+pub fn remove_processor(pipeline: State<Arc<Mutex<AudioPipeline>>>, processor_name: String) {
+    let mut pipeline_guard = pipeline.lock().unwrap();
+    let processors = &mut pipeline_guard.processors;
+
+    processors.retain(|x| x.get_name() != processor_name)
+}

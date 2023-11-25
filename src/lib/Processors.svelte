@@ -26,7 +26,7 @@
         name: target.innerText.toLowerCase(),
       });
 
-      getActiveProcessors();
+      await getActiveProcessors();
     }
   }
 
@@ -56,6 +56,19 @@
       }
     }
   }
+
+  async function removeProcessor(e: Event) {
+    let target = e.target as HTMLElement;
+
+    if (target) {
+      let form = target.closest("form");
+      if (form) {
+        await invoke("remove_processor", { processorName: form.name });
+
+        await getActiveProcessors();
+      }
+    }
+  }
 </script>
 
 <div class="flex w-full">
@@ -79,7 +92,10 @@
     </h4>
     {#each activeProcessors as processor}
       <form name={processor.name.Str} class="border border-gray-700 p-2">
-        <div><p class="text-xl capitalize mb-2">{processor.name.Str}</p></div>
+        <div class="flex justify-between">
+          <div><p class="text-xl capitalize mb-2">{processor.name.Str}</p></div>
+          <button on:click={(e) => removeProcessor(e)}>Remove</button>
+        </div>
         <div class="flex justify-between">
           {#each Object.entries(processor.details.Map) as [detail, value]}
             <div class="flex flex-col items-center px-2">
