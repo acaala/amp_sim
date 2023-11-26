@@ -3,11 +3,15 @@
   import Processors from "./lib/Processors.svelte";
 </script>
 
-<main class="w-full mt-24 flex flex-col items-center justify-center">
-  <h1 class="text-3xl font-medium mb-4">Amp Sim</h1>
-
-  <div class="mb-12">
-    <Devices />
+<main class="w-full flex flex-col items-center justify-center">
+  <div
+    class="flex gap-12 items-center w-full mb-6
+   p-4"
+  >
+    <h1 class="text-4xl font-medium">Amp Sim</h1>
+    <div>
+      <Devices />
+    </div>
   </div>
 
   <div class="w-full">
