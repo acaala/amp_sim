@@ -1,6 +1,6 @@
 # AmpSim - A Rust-Based Guitar Amp Simulator
 
-AmpSim is an open-source guitar amp simulator written in Rust, offering musicians a versatile platform to shape their guitar tones. This project is inspired by popular amp simulation software like Guitar Rig and Amplitube but is designed with the efficiency and performance benefits of the Rust programming language.
+AmpSim is a guitar amp simulator written in Rust, offering musicians a versatile platform to shape their guitar tones. This project is inspired by popular amp simulation software like Guitar Rig and Amplitube but is designed with the efficiency and performance benefits of the Rust programming language.
 
 ## Getting Started
 
