@@ -8,7 +8,7 @@
     class="flex gap-12 items-center w-full 
    p-4 border-b border-gray-900"
   >
-    <h1 class="text-2xl font-medium">Rust Tone</h1>
+    <h1 class="text-2xl font-medium">Rustone</h1>
     <div>
       <Devices />
     </div>

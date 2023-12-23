@@ -1,6 +1,6 @@
-# AmpSim - A Rust-Based Guitar Amp Simulator
+# Rustone - A Rust-Based Guitar Amp Simulator
 
-AmpSim is a guitar amp simulator written in Rust, offering musicians a versatile platform to shape their guitar tones. This project is inspired by popular amp simulation software like Guitar Rig and Amplitube but is designed with the efficiency and performance benefits of the Rust programming language.
+Rustone is a guitar amp simulator written in Rust, offering musicians a versatile platform to shape their guitar tones. This project is inspired by popular amp simulation software like Guitar Rig and Amplitube but is designed with the efficiency and performance benefits of the Rust programming language.
 
 ## Getting Started
 
@@ -28,4 +28,4 @@ Contributions from the community are highly valued. Whether you're a developer, 
 
 ## License
 
-AmpSim is licensed under the MIT License, making it free and open-source. Feel free to use, modify, and share the software according to the terms of the license.
+Rustone is licensed under the MIT License, making it free and open-source. Feel free to use, modify, and share the software according to the terms of the license.
