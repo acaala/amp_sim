@@ -71,29 +71,28 @@
   }
 </script>
 
-<div class="flex w-full">
-  <div></div>
-  <div class="w-full bg-[#0f0f0f] p-4">
-    <h2 class="text-2xl font-medium mb-4 text-center">Audio Effects</h2>
+<div class="flex w-full h-full">
+  <div class="w-1/3 py-4 px-6">
+    <h2 class="text-xl text-gray-300 font-medium mb-4 ">Audio Effects</h2>
 
-    <div class="flex flex-col gap-4 mb-4 w-1/2 mx-auto">
+    <div class="flex flex-col gap-4 mb-4">
       {#each availableProcessors as processor}
         <button
-          class="border border-[#2f2f2f]"
+          class="border border-[#2f2f2f] capitalize"
           on:click={(e) => addProcessor(e)}>{processor}</button
         >
       {/each}
     </div>
   </div>
 
-  <div class="w-full p-4">
+  <div class="w-full h-full p-4 bg-[#0f0f0f] flex flex-col gap-1">
     <h4 class="text-sm font-medium text-gray-400 text-center mb-4">
       Active Processors
     </h4>
     {#each activeProcessors as processor}
-      <form name={processor.name.Str} class="border border-gray-700 p-2">
-        <div class="flex justify-between">
-          <div><p class="text-xl capitalize mb-2">{processor.name.Str}</p></div>
+      <form name={processor.name.Str} class="bg-[#333] border border-gray-800 p-2">
+        <div class="flex justify-between mb-4 items-center">
+          <div><p class="text-xl capitalize">{processor.name.Str}</p></div>
           <button on:click={(e) => removeProcessor(e)}>Remove</button>
         </div>
         <div class="flex justify-between">

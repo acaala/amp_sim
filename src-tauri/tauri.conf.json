@@ -35,9 +35,9 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
-        "title": "amp_sim",
-        "width": 800,
+        "resizable": false,
+        "title": "Rust Tone",
+        "width": 1200,
         "height": 600
       }
     ]
