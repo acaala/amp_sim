@@ -4,7 +4,7 @@ Rustone is a guitar amp simulator written in Rust, offering musicians a versatil
 
 ## Getting Started
 
-To build and run AmpSim locally, follow these steps:
+To build and run Rustone locally, follow these steps:
 
 1. Clone the repository:
 
