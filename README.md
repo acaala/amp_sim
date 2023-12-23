@@ -15,18 +15,11 @@ cd amp_sim
 
 2. Build the project
 
-```bash
-cargo build --release
-
-```
-
-3. Run the app.
-
 !Important!
-Before running the app, make sure to mute the sound output if your default devices are the built in microphone and speaker. Otherwise expect very loud feedback.
+Before running the app, make sure to turn down your volume if your default devices are the built in microphone and speaker. Otherwise expect very loud feedback.
 
 ```bash
-./target/release/amp_sim
+cargo tauri dev
 ```
 
 ### Contributing
