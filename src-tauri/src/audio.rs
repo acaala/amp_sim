@@ -62,5 +62,6 @@ pub fn start_audio_thread(
 }
 
 pub fn get_processor_impl_names() -> Vec<&'static str> {
-    vec![Amplifier::name(), ScreamerPedal::name()]
+    // Has to be a better way.
+   vec!["amplifier", "screamer"]
 }

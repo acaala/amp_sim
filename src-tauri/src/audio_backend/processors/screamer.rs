@@ -40,9 +40,6 @@ impl Processor for ScreamerPedal {
         println!("Set level to: {:#?}", self.level);
     }
 
-    fn name() -> &'static str {
-        "Screamer"
-    }
     fn get_name(&self) -> &'static str {
         "Screamer"
     }

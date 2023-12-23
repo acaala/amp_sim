@@ -61,10 +61,6 @@ impl Processor for Amplifier {
         println!("Set tone to: {:#?}", hash_map_values.get("tone").unwrap());
     }
 
-    fn name() -> &'static str {
-        "Amplifier"
-    }
-
     fn get_name(&self) -> &'static str {
         "amplifier"
     }

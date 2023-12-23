@@ -12,8 +12,4 @@ pub trait Processor: Send + Sync {
     fn update_values(&mut self, hash_map_values: HashMap<String, String>);
     fn get_name(&self) -> &'static str;
     fn to_hash_map(&self) -> HashMap<String, ProcessorHashMapValue>;
-
-    fn name() -> &'static str
-    where
-        Self: Sized;
 }
