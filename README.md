@@ -22,6 +22,9 @@ cargo build --release
 
 3. Run the app.
 
+!Important!
+Before running the app, make sure to mute the sound output if your default devices are the built in microphone and speaker. Otherwise expect very loud feedback.
+
 ```bash
 ./target/release/amp_sim
 ```
