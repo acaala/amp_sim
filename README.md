@@ -9,8 +9,8 @@ To build and run Rustone locally, follow these steps:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/acaala/amp_sim.git
-cd amp_sim
+git clone git@github.com:acaala/rustone.git
+cd rustone
 ```
 
 2. Build the project
