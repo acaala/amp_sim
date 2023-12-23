@@ -22,10 +22,6 @@ Before running the app, make sure to turn down your volume if your default devic
 cargo tauri dev
 ```
 
-### Contributing
-
-Contributions from the community are highly valued. Whether you're a developer, designer, or musician, there are various ways to get involved. Check out the contributing guidelines for more information.
-
 ## License
 
 Rustone is licensed under the MIT License, making it free and open-source. Feel free to use, modify, and share the software according to the terms of the license.
