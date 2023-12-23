@@ -13,7 +13,7 @@ git clone git@github.com:acaala/rustone.git
 cd rustone
 ```
 
-2. Build and Run the project
+2. Build and run the project
 
 !Important!
 Before running the app, make sure to turn down your volume if your default devices are the built in microphone and speaker. Otherwise expect very loud feedback.
