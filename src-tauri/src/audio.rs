@@ -7,11 +7,8 @@ use std::{
 };
 
 use crate::audio_backend::{
-    audio_device_manager::AudioDeviceManager,
-    audio_pipeline::AudioPipeline,
+    audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline,
     audio_stream_manager::AudioStreamManager,
-    processor_trait::Processor,
-    processors::{amplifier::Amplifier, screamer::ScreamerPedal},
 };
 
 pub enum AudioCommand {
@@ -63,5 +60,5 @@ pub fn start_audio_thread(
 
 pub fn get_processor_impl_names() -> Vec<&'static str> {
     // Has to be a better way.
-   vec!["amplifier", "screamer"]
+    vec!["amplifier", "screamer"]
 }
