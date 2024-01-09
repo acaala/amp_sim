@@ -19,7 +19,7 @@
 }
 
 input,
-button {
+.button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -32,20 +32,20 @@ button {
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
 
-button {
+.button {
   cursor: pointer;
 }
 
-button:hover {
+.button:hover {
   border-color: #396cd8;
 }
-button:active {
+.button:active {
   border-color: #396cd8;
   background-color: #e8e8e8;
 }
 
 input,
-button {
+.button {
   outline: none;
 }
 
@@ -60,11 +60,11 @@ button {
   }
 
   input,
-  button {
+  .button {
     color: #ffffff;
     background-color: #0f0f0f98;
   }
-  button:active {
+  .button:active {
     background-color: #0f0f0f69;
   }
 }

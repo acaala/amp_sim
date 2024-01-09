@@ -46,21 +46,27 @@
   });
 </script>
 
-<div class="flex gap-4 items-center">
-  <div class="flex items-center gap-4">
-    <p class="mb-1 text-sm font-medium text-gray-300">Input Device:</p>
-    <select class="cursor-pointer bg-[#0f0f0f] appearance-none p-2" on:change={(e) => setInputDevice(e)}>
+<div class="flex flex-col gap-4 items-center">
+  <div class="flex items-center gap-4 w-full justify-between">
+    <p class="text-sm font-medium text-gray-300">Input:</p>
+    <select
+      class="cursor-pointer bg-[#0f0f0f] appearance-none p-2 w-48"
+      on:change={(e) => setInputDevice(e)}
+    >
       {#each devices.inputs as input}
         <option value={input} selected={input == initialDevices.input}
-          >{input} </option
-        >
+          >{input}
+        </option>
       {/each}
     </select>
   </div>
 
-  <div class="flex items-center gap-4">
-    <p class="mb-1 text-sm font-medium text-gray-300">Output Device:</p>
-    <select class="cursor-pointer bg-[#0f0f0f] appearance-none p-2 " on:change={(e) => setOutDevice(e)}>
+  <div class="flex items-center gap-4 w-full justify-between">
+    <p class="text-sm font-medium text-gray-300">Output:</p>
+    <select
+      class="cursor-pointer bg-[#0f0f0f] appearance-none p-2 w-48"
+      on:change={(e) => setOutDevice(e)}
+    >
       {#each devices.outputs as output}
         <option value={output} selected={output == initialDevices.output}
           >{output}</option
