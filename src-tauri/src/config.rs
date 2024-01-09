@@ -40,7 +40,11 @@ impl Config {
     pub fn save(&self) -> Result<(), anyhow::Error> {
         let path = Config::config_path();
 
-        let mut file = OpenOptions::new().write(true).create(true).open(path)?;
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(path)?;
 
         let json_to_save = serde_json::to_string(self)?;
 
