@@ -5,6 +5,11 @@ use std::{
 
 use anyhow::{anyhow, Error};
 use cpal::traits::DeviceTrait;
+use reqwest::{
+    header::{self, HeaderMap, HeaderValue},
+    Client,
+};
+use serde_json::json;
 use tauri::State;
 
 use crate::{
@@ -165,4 +170,22 @@ pub fn remove_processor(pipeline: State<Arc<Mutex<AudioPipeline>>>, processor_na
     let mut pipeline_guard = pipeline.lock().unwrap();
 
     pipeline_guard.remove_processor(processor_name)
+}
+
+#[tauri::command]
+pub fn set_openai_api_key(config: State<Arc<Mutex<Config>>>, key: String) -> Result<(), String> {
+    let mut config_guard = config.lock().unwrap();
+
+    config_guard.openai_api_key = Some(key);
+    let _ = config_guard.save();
+
+    // TODO: Handle failure.
+    Ok(())
+}
+
+#[tauri::command]
+pub fn get_openai_api_key(config: State<Arc<Mutex<Config>>>) -> Option<String> {
+    let config_guard = config.lock().unwrap();
+
+    config_guard.openai_api_key.clone()
 }

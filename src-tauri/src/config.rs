@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 pub struct Config {
     pub previous_input_device: Option<String>,
     pub previous_output_device: Option<String>,
+    pub openai_api_key: Option<String>,
 }
 
 impl Config {
@@ -17,6 +18,7 @@ impl Config {
         Self {
             previous_input_device: None,
             previous_output_device: None,
+            openai_api_key: None,
         }
     }
 
