@@ -19,11 +19,24 @@ use amp_sim::{
 
 fn main() {
     let config = Arc::new(Mutex::new(Config::retrieve()));
-
     let audio_device_manager = Arc::new(Mutex::new(AudioDeviceManager::new()));
     let audio_pipeline = Arc::new(Mutex::new(AudioPipeline::new()));
 
     let audio_tx = start_audio_thread(audio_device_manager.clone(), audio_pipeline.clone());
+
+    if let Some(input_device) = &config.lock().unwrap().previous_input_device {
+        let _ = audio_device_manager
+            .lock()
+            .unwrap()
+            .set_input_device(input_device.to_string());
+    }
+
+    if let Some(output_device) = &config.lock().unwrap().previous_output_device {
+        let _ = audio_device_manager
+            .lock()
+            .unwrap()
+            .set_output_device(output_device.to_string());
+    }
 
     tauri::Builder::default()
         .manage(audio_device_manager)

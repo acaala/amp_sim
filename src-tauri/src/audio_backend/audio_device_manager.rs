@@ -52,7 +52,9 @@ impl AudioDeviceManager {
             .into_iter()
             .find(|x| x.name().unwrap() == new_device_name);
 
-        self.input_device = input_device.unwrap();
+        if let Some(device) = input_device {
+            self.input_device = device;
+        }
 
         Ok(())
     }
@@ -65,7 +67,9 @@ impl AudioDeviceManager {
             .into_iter()
             .find(|x| x.name().unwrap() == new_device_name);
 
-        self.output_device = output_device.unwrap();
+        if let Some(device) = output_device {
+            self.output_device = device;
+        }
 
         Ok(())
     }
