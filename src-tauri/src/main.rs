@@ -6,6 +6,7 @@ use std::sync::{Arc, Mutex};
 use amp_sim::{
     audio::start_audio_thread,
     audio_backend::{audio_device_manager::AudioDeviceManager, audio_pipeline::AudioPipeline},
+    config::Config,
     tauri_commands::{
         __cmd__add_processor_to_pipeline, __cmd__get_active_processors, __cmd__get_devices,
         __cmd__get_processors, __cmd__remove_processor, __cmd__set_input_device,
@@ -17,6 +18,8 @@ use amp_sim::{
 };
 
 fn main() {
+    let config = Arc::new(Mutex::new(Config::retrieve()));
+
     let audio_device_manager = Arc::new(Mutex::new(AudioDeviceManager::new()));
     let audio_pipeline = Arc::new(Mutex::new(AudioPipeline::new()));
 
@@ -26,6 +29,7 @@ fn main() {
         .manage(audio_device_manager)
         .manage(audio_tx)
         .manage(audio_pipeline)
+        .manage(config)
         .invoke_handler(tauri::generate_handler![
             set_input_device,
             set_output_device,

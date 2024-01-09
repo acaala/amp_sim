@@ -15,6 +15,7 @@ use crate::{
         processor_trait::{Processor, ProcessorHashMapValue},
         processors::{amplifier::Amplifier, screamer::ScreamerPedal},
     },
+    config::Config,
 };
 
 #[tauri::command]
@@ -50,13 +51,18 @@ pub fn stop_audio(tx: State<Sender<AudioCommand>>) {
 #[tauri::command]
 pub fn set_input_device(
     state: State<Arc<Mutex<AudioDeviceManager>>>,
+    config: State<Arc<Mutex<Config>>>,
     tx: State<Sender<AudioCommand>>,
     new_device: String,
 ) -> Result<(), String> {
     tx.send(AudioCommand::Stop)
         .expect("Failed to send stop command");
 
-    let _ = state.lock().unwrap().set_input_device(new_device);
+    let _ = state.lock().unwrap().set_input_device(new_device.clone());
+
+    let mut config_guard = config.lock().unwrap();
+    config_guard.previous_input_device = Some(new_device);
+    config_guard.save();
 
     tx.send(AudioCommand::Start)
         .expect("Failed to send start command");
@@ -67,13 +73,18 @@ pub fn set_input_device(
 #[tauri::command]
 pub fn set_output_device(
     state: State<Arc<Mutex<AudioDeviceManager>>>,
+    config: State<Arc<Mutex<Config>>>,
     tx: State<Sender<AudioCommand>>,
     new_device: String,
 ) -> Result<(), String> {
     tx.send(AudioCommand::Stop)
         .expect("Failed to send stop command");
 
-    let _ = state.lock().unwrap().set_output_device(new_device);
+    let _ = state.lock().unwrap().set_output_device(new_device.clone());
+
+    let mut config_guard = config.lock().unwrap();
+    config_guard.previous_output_device = Some(new_device);
+    config_guard.save();
 
     tx.send(AudioCommand::Start)
         .expect("Failed to send start command");
