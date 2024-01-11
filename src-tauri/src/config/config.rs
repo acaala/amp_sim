@@ -6,23 +6,13 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Config {
-    pub previous_input_device: Option<String>,
-    pub previous_output_device: Option<String>,
-    pub openai_api_key: Option<String>,
-}
-
-impl Config {
-    fn new() -> Self {
-        Self {
-            previous_input_device: None,
-            previous_output_device: None,
-            openai_api_key: None,
-        }
-    }
-
-    pub fn retrieve() -> Self {
+pub trait Config {
+    fn default() -> Self;
+    fn config_path() -> &'static Path;
+    fn retrieve() -> Self
+    where
+        Self: Sized + for<'a> Deserialize<'a> + Serialize,
+    {
         let path = Self::config_path();
 
         if path.exists() {
@@ -30,17 +20,19 @@ impl Config {
             let mut buffer = String::new();
             let _ = file.read_to_string(&mut buffer);
 
-            let config: Config = serde_json::from_str(&buffer).unwrap();
+            let config: Self = serde_json::from_str(&buffer).unwrap();
             config
         } else {
-            let config = Self::new();
+            let config = Self::default();
             config.save().expect("To save file");
             config
         }
     }
-
-    pub fn save(&self) -> Result<(), anyhow::Error> {
-        let path = Config::config_path();
+    fn save(&self) -> Result<(), anyhow::Error>
+    where
+        Self: Serialize,
+    {
+        let path = Self::config_path();
 
         let mut file = OpenOptions::new()
             .write(true)
@@ -53,9 +45,5 @@ impl Config {
         file.write_all(json_to_save.as_bytes())?;
 
         Ok(())
-    }
-
-    fn config_path() -> &'static Path {
-        Path::new("config.json")
     }
 }
