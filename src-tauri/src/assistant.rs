@@ -159,5 +159,3 @@ impl Assistant {
         Ok(response["status"].as_str().unwrap().to_owned())
     }
 }
-
-//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
