@@ -4,7 +4,7 @@
   import Settings from "./lib/Settings.svelte";
   import Hamburger from "./lib/icons/hamburger.svelte";
 
-  let hideAssistant = true;
+  // let hideAssistant = true;
   let hideSettings = true;
 </script>
 
@@ -20,16 +20,16 @@
       <Hamburger />
     </button>
     <h1 class="text-2xl font-medium">Rustone</h1>
-    <button class="button" on:click={() => (hideAssistant = false)}>AI</button>
+    <!-- <button class="button" on:click={() => (hideAssistant = false)}>AI</button> -->
   </div>
 
   <div class="w-full h-full">
     <Processors />
   </div>
 
-  <div class:hidden={hideAssistant}>
+  <!-- <div class:hidden={hideAssistant}>
     <Assistant bind:hideAssistant />
-  </div>
+  </div> -->
 
   <div class:hidden={hideSettings}>
     <Settings bind:hideSettings />
