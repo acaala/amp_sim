@@ -24,6 +24,7 @@ hound = "3.5.1"
 ringbuf = "0.3.3"
 reqwest = {version = "0.11.23", features = ["json"] }
 tokio = {version = "1.35.1", features = ["full"] }
+regex = "1.10.2"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
