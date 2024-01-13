@@ -2,7 +2,7 @@
   // import Assistant from "./lib/Assistant.svelte";
   import Processors from "./lib/Processors.svelte";
   import Settings from "./lib/Settings.svelte";
-  import Hamburger from "./lib/icons/hamburger.svelte";
+  import Hamburger from "./lib/icons/Hamburger.svelte";
 
   // let hideAssistant = true;
   let hideSettings = true;
