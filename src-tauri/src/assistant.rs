@@ -1,14 +1,10 @@
-use std::{
-    fs::{File, OpenOptions},
-    io::{Read, Write},
-    path::Path,
-    str::{Bytes, FromStr},
-};
+use std::collections::HashMap;
 
 use anyhow::Error;
+use regex::Regex;
 use reqwest::{
     header::{self, HeaderMap, HeaderValue},
-    Client, Response,
+    Client,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -121,8 +117,6 @@ impl Assistant {
             "assistant_id": "asst_DXW9s2TeaZGXxwfc85rC5v6v",
         });
 
-        println!("Sending");
-
         let response = Client::new()
             .post(url)
             .headers(headers)
@@ -132,8 +126,7 @@ impl Assistant {
             .json::<Value>()
             .await?;
 
-        println!("Runs");
-        println!("{:?}", response);
+        println!("Running Assistant");
 
         Ok(response["id"].as_str().unwrap().to_owned())
     }
@@ -154,8 +147,31 @@ impl Assistant {
             .json::<Value>()
             .await?;
 
-        println!("{:?}", response["status"]);
+        println!("Run Status: {:?}", response["status"]);
 
         Ok(response["status"].as_str().unwrap().to_owned())
     }
+
+    pub fn get_parsed_assistant_response(
+        &self,
+        initial_response: Value,
+    ) -> Result<AssistantResponse, Error> {
+        let response_str = &initial_response["data"][0]["content"][0]["text"]["value"].to_string();
+
+        let re = Regex::new(r"\\n|\\|```json|```")?;
+        let mut cleaned_response = re.replace_all(response_str, "").to_string();
+
+        cleaned_response = cleaned_response.trim_matches('"').to_string();
+
+        let res: AssistantResponse = serde_json::from_str(&cleaned_response)?;
+
+        println!("Assistant Response: {:?}", res);
+
+        Ok(res)
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct AssistantResponse {
+    pub processors: Vec<HashMap<String, HashMap<String, f32>>>,
 }
