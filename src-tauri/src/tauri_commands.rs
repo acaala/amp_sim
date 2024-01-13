@@ -139,7 +139,7 @@ fn init_processor(
     name: &String,
     values: Option<HashMap<String, String>>,
 ) -> Result<Box<dyn Processor>, Error> {
-    match name.as_str() {
+    match name.to_lowercase().as_str() {
         "amplifier" => {
             let mut amplifier = Box::new(Amplifier::new());
             if let Some(hashmap_values) = values {
@@ -255,37 +255,38 @@ pub fn submit_user_prompt(
         let mut run_status = String::new();
 
         while run_status != "completed" {
-            println!("Not completed");
+            println!("Processing..");
             // Do an event to the front end here.
             thread::sleep(Duration::from_secs(2));
             if let Ok(status) = assistant_guard.check_run_status(run_id.clone()).await {
                 run_status = status
             }
         }
-        println!("Is complete");
+        println!("Is Complete");
 
         let response = assistant_guard.retrieve_messages().await.unwrap();
-        println!("Response: {:?}", response);
 
-        // if let Some(processors) = res.processors.iter() {
-        //     println!("Processors: {:?}", processors);
-        //     for processor in processors {
-        //         if let Some(amplifier) = processor.as_object() {
-        //             println!("Found amplifier:");
+        let assistant_response = assistant_guard
+            .get_parsed_assistant_response(response)
+            .unwrap();
 
-        //             for (key, value) in amplifier {
-        //                 let value_map: HashMap<String, String> =
-        //                     serde_json::from_value(value.clone()).unwrap();
-        //                 let processor = init_processor(key, Some(value_map));
+        for processor_map in &assistant_response.processors {
+            for (processor_name, settings) in processor_map {
+                let mut new_settings_map: HashMap<String, String> = HashMap::new();
 
-        //                 if let Ok(proc) = processor {
-        //                     audio_pipeline_clone.lock().unwrap().add_processor(proc);
-        //                     println!("Added processor: {:#?}", key)
-        //                 }
-        //             }
-        //         }
-        //     }
-        // };
+                for (setting_name, setting_value) in settings {
+                    new_settings_map.insert(setting_name.to_owned(), setting_value.to_string());
+                }
+
+                let processor = init_processor(processor_name, Some(new_settings_map));
+                if let Ok(proc) = processor {
+                    audio_pipeline_clone.lock().unwrap().add_processor(proc);
+                    println!("Added processor: {:#?}", processor_name)
+
+                    //send an event.
+                }
+            }
+        }
     });
 
     Ok(())
