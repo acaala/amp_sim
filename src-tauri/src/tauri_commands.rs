@@ -19,6 +19,7 @@ use crate::{
         processors::{amplifier::Amplifier, screamer::ScreamerPedal},
     },
     config::{assistant_config::AssistantConfig, audio_config::AudioConfig, config::Config},
+    events::emit_pipeline_updated_event,
 };
 
 #[tauri::command]
@@ -65,7 +66,7 @@ pub fn set_input_device(
 
     let mut config_guard = audio_config.lock().unwrap();
     config_guard.previous_input_device = Some(new_device);
-    config_guard.save();
+    let _ = config_guard.save();
 
     tx.send(AudioCommand::Start)
         .expect("Failed to send start command");
@@ -87,7 +88,7 @@ pub fn set_output_device(
 
     let mut config_guard = audio_config.lock().unwrap();
     config_guard.previous_output_device = Some(new_device);
-    config_guard.save();
+    let _ = config_guard.save();
 
     tx.send(AudioCommand::Start)
         .expect("Failed to send start command");
@@ -126,12 +127,19 @@ pub fn get_active_processors(
 }
 
 #[tauri::command]
-pub fn add_processor_to_pipeline(audio_pipeline: State<Arc<Mutex<AudioPipeline>>>, name: String) {
+pub fn add_processor_to_pipeline(
+    audio_pipeline: State<Arc<Mutex<AudioPipeline>>>,
+    window: Window,
+    name: String,
+) {
     let processor = init_processor(&name, None);
 
     if let Ok(proc) = processor {
-        audio_pipeline.lock().unwrap().add_processor(proc);
-        println!("Added processor: {:#?}", name)
+        let mut audio_pipeline_guard = audio_pipeline.lock().unwrap();
+        audio_pipeline_guard.add_processor(proc);
+        println!("Added processor: {:#?}", name);
+
+        emit_pipeline_updated_event(window, audio_pipeline_guard)
     }
 }
 
@@ -174,18 +182,24 @@ pub fn update_processor_values(
 }
 
 #[tauri::command]
-pub fn remove_processor(pipeline: State<Arc<Mutex<AudioPipeline>>>, processor_name: String) {
+pub fn remove_processor(
+    pipeline: State<Arc<Mutex<AudioPipeline>>>,
+    window: Window,
+    processor_name: String,
+) {
     let mut pipeline_guard = pipeline.lock().unwrap();
 
-    pipeline_guard.remove_processor(processor_name)
+    pipeline_guard.remove_processor(processor_name);
+
+    emit_pipeline_updated_event(window, pipeline_guard);
 }
 
 #[tauri::command]
-pub fn set_openai_api_key(
-    assistant: State<Arc<Mutex<AssistantConfig>>>,
+pub async fn set_openai_api_key(
+    assistant: State<'_, Arc<tokio::sync::Mutex<AssistantConfig>>>,
     key: String,
 ) -> Result<(), String> {
-    let mut assistant_guard = assistant.lock().unwrap();
+    let mut assistant_guard = assistant.lock().await;
 
     assistant_guard.api_key = Some(key);
     let _ = assistant_guard.save();
@@ -288,13 +302,7 @@ pub fn submit_user_prompt(
         }
 
         let audio_pipeline_guard = audio_pipeline_clone.lock().unwrap();
-        let active_processors: Vec<HashMap<String, ProcessorHashMapValue>> = audio_pipeline_guard
-            .processors
-            .iter()
-            .filter_map(|proc| Some(proc.to_hash_map()))
-            .collect();
-
-        window.emit("pipeline_updated", active_processors)
+        emit_pipeline_updated_event(window, audio_pipeline_guard);
     });
 
     Ok(())
