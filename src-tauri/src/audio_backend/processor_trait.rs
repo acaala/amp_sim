@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::Serialize;
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 pub enum ProcessorHashMapValue {
     Str(String),
     Map(HashMap<String, f32>),

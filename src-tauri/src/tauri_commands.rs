@@ -7,7 +7,7 @@ use std::{
 
 use anyhow::{anyhow, Error};
 use cpal::traits::DeviceTrait;
-use tauri::State;
+use tauri::{State, Window};
 
 use crate::{
     assistant::Assistant,
@@ -243,6 +243,7 @@ pub fn init_assistant(
 pub fn submit_user_prompt(
     assistant: State<Arc<tokio::sync::Mutex<Assistant>>>,
     audio_pipeline: State<Arc<Mutex<AudioPipeline>>>,
+    window: Window,
     prompt: String,
 ) -> Result<(), String> {
     let assistant_clone = Arc::clone(&assistant);
@@ -282,11 +283,18 @@ pub fn submit_user_prompt(
                 if let Ok(proc) = processor {
                     audio_pipeline_clone.lock().unwrap().add_processor(proc);
                     println!("Added processor: {:#?}", processor_name)
-
-                    //send an event.
                 }
             }
         }
+
+        let audio_pipeline_guard = audio_pipeline_clone.lock().unwrap();
+        let active_processors: Vec<HashMap<String, ProcessorHashMapValue>> = audio_pipeline_guard
+            .processors
+            .iter()
+            .filter_map(|proc| Some(proc.to_hash_map()))
+            .collect();
+
+        window.emit("pipeline_updated", active_processors)
     });
 
     Ok(())
