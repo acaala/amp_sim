@@ -10,10 +10,6 @@
     availableProcessors = (await invoke("get_processors")) as [];
   }
 
-  async function getActiveProcessors() {
-    activeProcessors = await invoke("get_active_processors");
-  }
-
   onMount(async () => {
     getAvailableProcessors();
 
