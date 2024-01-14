@@ -1,13 +1,14 @@
-<!-- <script>
+<script>
   import { invoke } from "@tauri-apps/api/tauri";
   import { onMount } from "svelte";
 
   export let hideAssistant;
   let apiKey = "";
+  let prompt = "";
 
   async function submitPromptToAi() {
-    // await invoke("submit_user_prompt_to_ai", { prompt: "what is the date?" });
-    await invoke("submit_user_prompt", { prompt: "give me a crunchy tone" });
+    if (!prompt) return;
+    await invoke("submit_user_prompt", { prompt });
   }
 
   async function setApiKey() {
@@ -31,12 +32,17 @@
         <input type="password" bind:value={apiKey} on:change={setApiKey} />
       </div>
     {:else}
-      <div class="flex items-center">
-        <h2>Ai Assistant</h2>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-medium">Ai Assistant</h2>
         <button on:click={() => (hideAssistant = true)}>Close</button>
       </div>
-      <input type="text" />
-      <button on:click={() => submitPromptToAi()}>Sub</button>
+      <input
+        type="text"
+        required
+        bind:value={prompt}
+        placeholder="E.g. Give me a crunchy tone"
+      />
+      <button class="button" on:click={() => submitPromptToAi()}>Submit</button>
     {/if}
   </div>
-</div> -->
+</div>
