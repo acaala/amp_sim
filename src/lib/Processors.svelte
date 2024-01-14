@@ -29,8 +29,6 @@
       await invoke("add_processor_to_pipeline", {
         name: target.innerText.toLowerCase(),
       });
-
-      await getActiveProcessors();
     }
   }
 
@@ -68,8 +66,6 @@
       let form = target.closest("form");
       if (form) {
         await invoke("remove_processor", { processorName: form.name });
-
-        await getActiveProcessors();
       }
     }
   }
