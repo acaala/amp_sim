@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { listen } from "@tauri-apps/api/event";
   import { invoke } from "@tauri-apps/api/tauri";
   import { onMount } from "svelte";
 
@@ -15,7 +16,10 @@
 
   onMount(async () => {
     getAvailableProcessors();
-    getActiveProcessors();
+
+    await listen("pipeline_updated", (event) => {
+      activeProcessors = event.payload as [];
+    });
   });
 
   async function addProcessor(e: Event) {
