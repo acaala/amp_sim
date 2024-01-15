@@ -301,7 +301,9 @@ pub fn submit_user_prompt(
             }
         }
 
-        let audio_pipeline_guard = audio_pipeline_clone.lock().unwrap();
+        let mut audio_pipeline_guard = audio_pipeline_clone.lock().unwrap();
+        audio_pipeline_guard.processors.clear();
+
         emit_pipeline_updated_event(window, audio_pipeline_guard);
     });
 
