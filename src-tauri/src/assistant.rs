@@ -74,9 +74,6 @@ impl Assistant {
             .json::<Value>()
             .await?;
 
-        println!("/n Retrieved message");
-        println!("{:?}", response);
-
         Ok(response)
     }
 
@@ -100,8 +97,6 @@ impl Assistant {
             .await?
             .json::<Value>()
             .await?;
-
-        println!("{:?}", response);
 
         Ok(())
     }
