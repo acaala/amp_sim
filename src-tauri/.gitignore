@@ -5,3 +5,4 @@
 config.json
 assistant.json
 config/*
+audio_device.json

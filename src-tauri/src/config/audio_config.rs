@@ -19,6 +19,6 @@ impl Config for AudioConfig {
     }
 
     fn config_path() -> &'static Path {
-        Path::new("config/audio_device.json")
+        Path::new("audio_device.json")
     }
 }

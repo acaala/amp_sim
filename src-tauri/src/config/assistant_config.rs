@@ -19,6 +19,6 @@ impl Config for AssistantConfig {
     }
 
     fn config_path() -> &'static std::path::Path {
-        Path::new("config/assistant.json")
+        Path::new("assistant.json")
     }
 }
